@@ -1,0 +1,14 @@
+/BinaryDilateImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/BinaryErodeImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/BinaryThresholdImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/CMakeLists.txt/1.8/Fri Jul 25 18:02:00 2008//TITK-3-20
+/CastImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/CurvatureAnisotropicDiffusionImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/CurvatureFlowImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/GradientAnisotropicDiffusionImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/MeanImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/MedianImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/SigmoidImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/ThresholdImageFilter.java/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+/simplePipeline.java.in/1.1/Wed Sep  6 20:58:41 2006//TITK-3-20
+D/notYetUsable////
