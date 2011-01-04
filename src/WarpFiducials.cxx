@@ -34,14 +34,19 @@ using std::ofstream;
 #include <string>
 using std::string;
 
-// boost
-#include <boost/filesystem.hpp>
-
 // ITK
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkPoint.h>
+
+// itksys for portable path seperator
+#define itksys_SHARED_FORWARD_DIR_BUILD ""
+#define itksys_SHARED_FORWARD_PATH_BUILD ""
+#define itksys_SHARED_FORWARD_PATH_INSTALL ""
+#define itksys_SHARED_FORWARD_EXE_BUILD ""
+#define itksys_SHARED_FORWARD_EXE_INSTALL ""
+#include <itksys/SharedForward.h>
 
 // See http://hdl.handle.net/10380/3060
 #include <itkSymmetricLogDomainDemonsRegistrationFilter.h>
@@ -93,8 +98,8 @@ int main(int argc, char *argv[])
     }
 
   // save warped fiducials csv file
-  //fs::path filename = outfidpath/outfidfile;
-  ofstream outfile( "temp" );
+  string filename = outfidpath + KWSYS_SHARED_FORWARD_PATH_SEP + outfidfile;
+  ofstream outfile( filename.c_str() );
   if( outfile.fail() )
     {
     cout << "Error: could not open output for writing." << endl;
