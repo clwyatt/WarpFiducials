@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BSL</category>
+  <title>
+    Warp Fiducials</title>
+  <description>
+    Register two images using log-domain demons and warp fidicials using the resulting deformation.
+  </description>
+  <version>
+    0.1
+  </version>
+  <documentation-url>www.bsl.ece.vt.edu</documentation-url>
+  <license>BSD</license>
+  <contributor>
+    Chris Wyatt
+  </contributor>
+  <acknowledgements>
+    None.
+  </acknowledgements>
+ <parameters>
+    <label>Input/Output</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>sourceVolume</name>
+      <label>Source Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <default>None</default>
+      <description>Source (moving) Image Volume</description>
+    </image>
+    <image>
+      <name>targetVolume</name>
+      <label>Target Input Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <default>None</default>
+      <description>Target (fixed) Image Volume</description>
+    </image>
+    <file>
+      <name>outfidpath</name>
+      <label>Output Fiducial Path</label>
+      <channel>input</channel>
+      <index>2</index>
+      <description>Output Fiducial File Path</description>
+    </file>
+    <string>
+      <name>outfidfile</name>
+      <label>Output Fiducial File</label>
+      <channel>input</channel>
+      <index>3</index>
+      <description>Output Fiducial File Name</description>
+    </string>
+    <point multiple="true" coordinateSystem="lps">
+      <name>infids</name>
+      <label>Input Fiducials</label>
+      <channel>input</channel>
+      <default>None</default>
+      <description>Input Fiducials</description>
+      <longflag>--input</longflag>
+    </point>
+ </parameters>
+</executable>
