@@ -37,13 +37,13 @@
       <default>None</default>
       <description>Target (fixed) Image Volume</description>
     </image>
-    <file>
+    <directory>
       <name>outfidpath</name>
       <label>Output Fiducial Path</label>
       <channel>input</channel>
       <index>2</index>
       <description>Output Fiducial File Path</description>
-    </file>
+    </directory>
     <string>
       <name>outfidfile</name>
       <label>Output Fiducial File</label>
