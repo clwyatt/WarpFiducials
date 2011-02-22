@@ -97,7 +97,7 @@ struct arguments
       osstr<<args.numIterations[i]<<" ";
       }
     std::string iterstr = "[ " + osstr.str() + "]";
-    
+
     std::string gtypeStr;
     switch (args.gradientType)
     {
@@ -156,6 +156,7 @@ struct arguments
     }
 };
 
+// The following was adapted from http://hdl.handle.net/10380/3060
 template <unsigned int Dimension>
 void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vector<float> > &infids )
 {
@@ -183,16 +184,16 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
   typedef itk::TransformFileReader                  TransformReaderType;
 
   {//for mem allocations
-   
+
   typename FixedImageReaderType::Pointer fixedImageReader
      = FixedImageReaderType::New();
   typename MovingImageReaderType::Pointer movingImageReader
      = MovingImageReaderType::New();
-  
+
   fixedImageReader->SetFileName( args.fixedImageFile.c_str() );
   movingImageReader->SetFileName( args.movingImageFile.c_str() );
-  
-  
+
+
   // Update the reader
   try
     {
@@ -211,7 +212,7 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
     // Set up the file readers
     typename VelocityFieldReaderType::Pointer fieldReader = VelocityFieldReaderType::New();
     fieldReader->SetFileName(  args.inputFieldFile.c_str() );
-    
+
     // Update the reader
     try
       {
@@ -223,7 +224,7 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
       std::cout << err << std::endl;
       exit( EXIT_FAILURE );
       }
-    
+
     inputVelField = fieldReader->GetOutput();
     inputVelField->DisconnectPipeline();
     }
@@ -233,7 +234,7 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
     typename TransformReaderType::Pointer transformReader
        = TransformReaderType::New();
     transformReader->SetFileName(  args.inputTransformFile.c_str() );
-      
+
     // Update the reader
     try
       {
@@ -248,7 +249,7 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
 
     typedef typename TransformReaderType::TransformType BaseTransformType;
     BaseTransformType* baseTrsf(0);
-    
+
     const typename TransformReaderType::TransformListType* trsflistptr
        = transformReader->GetTransformList();
     if ( trsflistptr->empty() )
@@ -261,34 +262,34 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
       std::cout << "The input transform file contains more than one transform." << std::endl;
       exit( EXIT_FAILURE );
       }
-    
+
     baseTrsf = trsflistptr->front();
     if ( !baseTrsf )
       {
       std::cout << "Could not read the input transform." << std::endl;
       exit( EXIT_FAILURE );
       }
-      
+
 
     // Set up the TransformToDeformationFieldFilter
     typedef itk::TransformToVelocityFieldSource
        <VelocityFieldType>                             FieldGeneratorType;
     typedef typename FieldGeneratorType::TransformType TransformType;
-    
+
     TransformType* trsf = dynamic_cast<TransformType*>(baseTrsf);
     if ( !trsf )
       {
       std::cout << "Could not cast input transform to a usable transform." << std::endl;
       exit( EXIT_FAILURE );
       }
-    
+
     typename FieldGeneratorType::Pointer fieldGenerator
        = FieldGeneratorType::New();
-    
+
     fieldGenerator->SetTransform( trsf );
     fieldGenerator->SetOutputParametersFromImage(
        fixedImageReader->GetOutput() );
-    
+
     // Update the fieldGenerator
     try
       {
@@ -304,7 +305,7 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
     inputVelField = fieldGenerator->GetOutput();
     inputVelField->DisconnectPipeline();
     }
-   
+
 
   if (!args.useHistogramMatching)
     {
@@ -515,69 +516,6 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
 
   }//end for mem allocations
 
-
-   // warp the result
-  typedef itk::WarpImageFilter
-   < ImageType, ImageType, DeformationFieldType >  WarperType;
-  typename WarperType::Pointer warper = WarperType::New();
-  warper->SetInput( movingImage );
-  warper->SetOutputSpacing( fixedImage->GetSpacing() );
-  warper->SetOutputOrigin( fixedImage->GetOrigin() );
-  warper->SetOutputDirection( fixedImage->GetDirection() );
-  warper->SetDeformationField( defField );
-
-
-  // Write warped image out to file
-  typedef PixelType                                OutputPixelType;
-  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
-  typedef itk::CastImageFilter
-   < ImageType, OutputImageType >                  CastFilterType;
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
-
-  typename WriterType::Pointer      writer =  WriterType::New();
-  typename CastFilterType::Pointer  caster =  CastFilterType::New();
-  writer->SetFileName( args.outputImageFile.c_str() );
-  caster->SetInput( warper->GetOutput() );
-  writer->SetInput( caster->GetOutput()   );
-  writer->SetUseCompression( true );
-
-  try
-    {
-    writer->Update();
-    }
-  catch( itk::ExceptionObject& err )
-    {
-    std::cout << "Unexpected error." << std::endl;
-    std::cout << err << std::endl;
-    exit( EXIT_FAILURE );
-    }
-
-
-  // Write output deformation field
-  if (!args.outputDeformationFieldFile.empty())
-    {
-    // Write the deformation field as an image of vectors.
-    // Note that the file format used for writing the deformation field must be
-    // capable of representing multiple components per pixel. This is the case
-    // for the MetaImage and VTK file formats for example.
-    typedef itk::ImageFileWriter< DeformationFieldType > FieldWriterType;
-    typename FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-    fieldWriter->SetFileName(  args.outputDeformationFieldFile.c_str() );
-    fieldWriter->SetInput( defField );
-    fieldWriter->SetUseCompression( true );
-
-    try
-      {
-      fieldWriter->Update();
-      }
-    catch( itk::ExceptionObject& err )
-      {
-      std::cout << "Unexpected error." << std::endl;
-      std::cout << err << std::endl;
-      exit( EXIT_FAILURE );
-      }
-    }
-
   typedef typename DeformationFieldType::IndexType IndexType;
   typedef typename ImageType::PointType PointType;
 
@@ -667,86 +605,3 @@ int main(int argc, char *argv[])
 
   return EXIT_SUCCESS;
 }
-
-  // // logging
-  // string logfilename = outfidpath + PATH_SEP + "warpfid.log";
-  // ofstream logfile( logfilename.c_str() );
-
-  // // read source and target
-  // typedef itk::ImageFileReader< ImageType > ReaderType;
-  // ReaderType::Pointer source_reader = ReaderType::New();
-  // source_reader->SetFileName( sourceVolume.c_str() );
-  // ReaderType::Pointer target_reader = ReaderType::New();
-  // target_reader->SetFileName( targetVolume.c_str() );
-
-  // try
-  //   {
-  //   source_reader->Update();
-  //   target_reader->Update();
-  //   }
-  // catch(itk::ExceptionObject &error)
-  //   {
-  //   cout << "Error reading input images." << endl;
-  //   cout << error << endl;
-  //   return EXIT_FAILURE;
-  //   }
-
-  // // register source to target
-  // typedef itk::SymmetricLogDomainDemonsRegistrationFilter
-  //   < ImageType, ImageType, VelocityFieldType>
-  //   RegistrationFilterType;
-  // typedef RegistrationFilterType::GradientType GradientType;
-
-  // RegistrationFilterType::Pointer filter
-  //   = RegistrationFilterType::New();
-
-  // filter->SetMaximumUpdateStepLength( 2.0 );
-  // filter->SetUseGradientType( static_cast<GradientType>(0) );
-  // filter->SetNumberOfBCHApproximationTerms( 2 );
-  // filter->SmoothVelocityFieldOn();
-  // filter->SetStandardDeviations( 1.0 );
-  // filter->SmoothUpdateFieldOn();
-  // filter->SetUpdateFieldStandardDeviations( 1.0 );
-
-  // typedef itk::MultiResolutionLogDomainDeformableRegistration
-  //   < ImageType, ImageType, VelocityFieldType, PixelType > MultiResRegistrationFilterType;
-  // MultiResRegistrationFilterType::Pointer multires = MultiResRegistrationFilterType::New();
-
-  // typedef itk::VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-  //    VelocityFieldType,double> FieldInterpolatorType;
-
-  // FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
-
-  // multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-
-  // multires->SetRegistrationFilter( filter );
-
-  // std::vector<unsigned int> numIterations(4);
-  // numIterations[0] = 200;
-  // numIterations[1] = 100;
-  // numIterations[2] = 50;
-  // numIterations[3] = 25;
-
-  // multires->SetNumberOfLevels( numIterations.size() );
-
-  // multires->SetNumberOfIterations( &numIterations[0] );
-
-  // multires->SetFixedImage( target_reader->GetOutput() );
-  // multires->SetMovingImage( source_reader->GetOutput() );
-  // multires->SetArbitraryInitialVelocityField( 0 );
-
-  // // Compute the deformation field
-  // try
-  //   {
-  //   logfile << filter << endl;
-  //   multires->UpdateLargestPossibleRegion();
-  //   }
-  // catch( itk::ExceptionObject& err )
-  //   {
-  //   std::cout << "Unexpected error." << std::endl;
-  //   std::cout << err << std::endl;
-  //   return EXIT_FAILURE;
-  //   }
-
-  // // Final deformation field
-  // DeformationFieldType::Pointer defField = multires->GetDeformationField();
