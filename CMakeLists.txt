@@ -19,6 +19,7 @@ ExternalProject_Add(external_tclap
   SVN_REPOSITORY http://svn.slicer.org/Slicer3/trunk/Libs/SlicerExecutionModel/tclap
   BINARY_DIR ${CMAKE_BINARY_DIR}/Build/tclap
   CMAKE_ARGS /
+  -DCMAKE_BUILD_TYPE=Release
   -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/Install/tclap
   )
 
@@ -27,6 +28,7 @@ ExternalProject_Add(external_modparser
   SVN_REPOSITORY http://svn.slicer.org/Slicer3/trunk/Libs/SlicerExecutionModel/ModuleDescriptionParser
   BINARY_DIR ${CMAKE_BINARY_DIR}/Build/modparser
   CMAKE_ARGS /
+  -DCMAKE_BUILD_TYPE=Release
   -DBUILD_SHARED_LIBS=OFF
   -DITK_DIR=${CMAKE_BINARY_DIR}/Install/ITK/lib/InsightToolkit /
   -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/Install/modparser
@@ -37,6 +39,7 @@ ExternalProject_Add(external_genclp
   SVN_REPOSITORY http://svn.slicer.org/Slicer3/trunk/Libs/SlicerExecutionModel/GenerateCLP
   BINARY_DIR ${CMAKE_BINARY_DIR}/Build/genclp
   CMAKE_ARGS /
+  -DCMAKE_BUILD_TYPE=Release
   -DModuleDescriptionParser_DIR=${CMAKE_BINARY_DIR}/Install/modparser/lib/ModuleDescriptionParser /
   -DTCLAP_DIR=${CMAKE_BINARY_DIR}/Install/tclap/lib/tclap /
   -DITK_DIR=${CMAKE_BINARY_DIR}/Install/ITK/lib/InsightToolkit /
