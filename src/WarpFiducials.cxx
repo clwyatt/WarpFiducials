@@ -578,219 +578,6 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
       }
     }
 
-  // // Write output inverse deformation field
-  // if (!args.outputInverseDeformationFieldFile.empty())
-  //   {
-  //   // Write the inverse deformation field as an image of vectors.
-  //   // Note that the file format used for writing the inverse deformation field must be
-  //   // capable of representing multiple components per pixel. This is the case
-  //   // for the MetaImage and VTK file formats for example.
-  //   typedef itk::ImageFileWriter< DeformationFieldType > FieldWriterType;
-  //   typename FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-  //   fieldWriter->SetFileName(  args.outputInverseDeformationFieldFile.c_str() );
-  //   fieldWriter->SetInput( invDefField );
-  //   fieldWriter->SetUseCompression( true );
-
-  //   try
-  //     {
-  //     fieldWriter->Update();
-  //     }
-  //   catch( itk::ExceptionObject& err )
-  //     {
-  //     std::cout << "Unexpected error." << std::endl;
-  //     std::cout << err << std::endl;
-  //     exit( EXIT_FAILURE );
-  //     }
-  //   }
-
-  //  // Write output inverse deformation field
-  // if (!args.outputVelocityFieldFile.empty())
-  //   {
-  //   // Write the velocity field as an image of vectors.
-  //   // Note that the file format used for writing the velocity field must be
-  //   // capable of representing multiple components per pixel. This is the case
-  //   // for the MetaImage and VTK file formats for example.
-  //   typedef itk::ImageFileWriter< VelocityFieldType > FieldWriterType;
-  //   typename FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-  //   fieldWriter->SetFileName(  args.outputVelocityFieldFile.c_str() );
-  //   fieldWriter->SetInput( velField );
-  //   fieldWriter->SetUseCompression( true );
-
-  //   try
-  //     {
-  //     fieldWriter->Update();
-  //     }
-  //   catch( itk::ExceptionObject& err )
-  //     {
-  //     std::cout << "Unexpected error." << std::endl;
-  //     std::cout << err << std::endl;
-  //     exit( EXIT_FAILURE );
-  //     }
-  //   }
-
-
-  // // Create and write warped grid image
-  // if ( args.verbosity > 0 )
-  //   {
-  //   typedef itk::Image< unsigned char, Dimension > GridImageType;
-  //   typename GridImageType::Pointer gridImage = GridImageType::New();
-  //   gridImage->SetRegions( movingImage->GetRequestedRegion() );
-  //   gridImage->SetOrigin( movingImage->GetOrigin() );
-  //   gridImage->SetSpacing( movingImage->GetSpacing() );
-  //   gridImage->Allocate();
-  //   gridImage->FillBuffer(0);
-
-  //   typedef itk::ImageRegionIteratorWithIndex<GridImageType> GridImageIteratorWithIndex;
-  //   GridImageIteratorWithIndex itergrid = GridImageIteratorWithIndex(
-  //      gridImage, gridImage->GetRequestedRegion() );
-
-  //   const int gridspacing(8);
-  //   for (itergrid.GoToBegin(); !itergrid.IsAtEnd(); ++itergrid)
-  //     {
-  //     itk::Index<Dimension> index = itergrid.GetIndex();
-
-  //     if (Dimension == 2 || Dimension == 3)
-  //       {
-  //       // produce an xy grid for all z
-  //       if ( (index[0]%gridspacing) == 0 ||
-  //            (index[1]%gridspacing) == 0 )
-  //         {
-  //         itergrid.Set( itk::NumericTraits<unsigned char>::max() );
-  //         }
-  //       }
-  //     else
-  //       {
-  //       unsigned int numGridIntersect = 0;
-  //       for( unsigned int dim = 0; dim < Dimension; dim++ )
-  //         {
-  //         numGridIntersect += ( (index[dim]%gridspacing) == 0 );
-  //         }
-  //       if (numGridIntersect >= (Dimension-1))
-  //         {
-  //         itergrid.Set( itk::NumericTraits<unsigned char>::max() );
-  //         }
-  //       }
-  //     }
-
-  //   typedef itk::WarpImageFilter
-  //      < GridImageType, GridImageType, DeformationFieldType >  GridWarperType;
-  //   typename GridWarperType::Pointer gridwarper = GridWarperType::New();
-  //   gridwarper->SetInput( gridImage );
-  //   gridwarper->SetOutputSpacing( fixedImage->GetSpacing() );
-  //   gridwarper->SetOutputOrigin( fixedImage->GetOrigin() );
-  //   gridwarper->SetOutputDirection( fixedImage->GetDirection() );
-  //   gridwarper->SetDeformationField( defField );
-
-  //   // Write warped grid to file
-  //   typedef itk::ImageFileWriter< GridImageType >  GridWriterType;
-
-  //   typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
-  //   gridwriter->SetFileName( "WarpedGridImage.mha" );
-  //   gridwriter->SetInput( gridwarper->GetOutput()   );
-  //   gridwriter->SetUseCompression( true );
-
-  //   try
-  //     {
-  //     gridwriter->Update();
-  //     }
-  //   catch( itk::ExceptionObject& err )
-  //     {
-  //     std::cout << "Unexpected error." << std::endl;
-  //     std::cout << err << std::endl;
-  //     exit( EXIT_FAILURE );
-  //     }
-  //   }
-
-
-  // // Create and write forewardwarped grid image
-  // if ( args.verbosity > 0 )
-  //   {
-  //   typedef itk::Image< unsigned char, Dimension > GridImageType;
-  //   typedef itk::GridForwardWarpImageFilter<DeformationFieldType, GridImageType> GridForwardWarperType;
-
-  //   typename GridForwardWarperType::Pointer fwWarper = GridForwardWarperType::New();
-  //   fwWarper->SetInput(defField);
-  //   fwWarper->SetForegroundValue( itk::NumericTraits<unsigned char>::max() );
-
-  //   // Write warped grid to file
-  //   typedef itk::ImageFileWriter< GridImageType >  GridWriterType;
-
-  //   typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
-  //   gridwriter->SetFileName( "ForwardWarpedGridImage.mha" );
-  //   gridwriter->SetInput( fwWarper->GetOutput()   );
-  //   gridwriter->SetUseCompression( true );
-
-  //   try
-  //     {
-  //     gridwriter->Update();
-  //     }
-  //   catch( itk::ExceptionObject& err )
-  //     {
-  //     std::cout << "Unexpected error." << std::endl;
-  //     std::cout << err << std::endl;
-  //     exit( EXIT_FAILURE );
-  //     }
-  //   }
-
-
-  // // compute final metric
-  // if ( args.verbosity > 0 )
-  //   {
-  //   double finalSSD = 0.0;
-  //   typedef itk::ImageRegionConstIterator<ImageType> ImageConstIterator;
-
-  //   ImageConstIterator iterfix = ImageConstIterator(
-  //      fixedImage, fixedImage->GetRequestedRegion() );
-
-  //   ImageConstIterator itermovwarp = ImageConstIterator(
-  //      warper->GetOutput(), fixedImage->GetRequestedRegion() );
-
-  //   for (iterfix.GoToBegin(), itermovwarp.GoToBegin(); !iterfix.IsAtEnd(); ++iterfix, ++itermovwarp)
-  //     {
-  //     finalSSD += vnl_math_sqr( iterfix.Get() - itermovwarp.Get() );
-  //     }
-
-  //   const double finalMSE = finalSSD / static_cast<double>(
-  //      fixedImage->GetRequestedRegion().GetNumberOfPixels() );
-  //   std::cout<<"MSE fixed image vs. warped moving image: "<<finalMSE<<std::endl;
-  //   }
-
-
-  // // Create and write jacobian of the deformation field
-  // if ( args.verbosity > 0 )
-  //   {
-  //   typedef itk::DisplacementFieldJacobianDeterminantFilter
-  //      <DeformationFieldType, PixelType> JacobianFilterType;
-  //   typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
-  //   jacobianFilter->SetInput( defField );
-  //   jacobianFilter->SetUseImageSpacing( true );
-
-  //   writer->SetFileName( "TransformJacobianDeteminant.mha" );
-  //   caster->SetInput( jacobianFilter->GetOutput() );
-  //   writer->SetInput( caster->GetOutput()   );
-  //   writer->SetUseCompression( true );
-
-  //   try
-  //     {
-  //     writer->Update();
-  //     }
-  //   catch( itk::ExceptionObject& err )
-  //     {
-  //     std::cout << "Unexpected error." << std::endl;
-  //     std::cout << err << std::endl;
-  //     exit( EXIT_FAILURE );
-  //     }
-
-  //   typedef itk::MinimumMaximumImageCalculator<ImageType> MinMaxFilterType;
-  //   typename MinMaxFilterType::Pointer minmaxfilter = MinMaxFilterType::New();
-  //   minmaxfilter->SetImage( jacobianFilter->GetOutput() );
-  //   minmaxfilter->Compute();
-  //   std::cout<<"Minimum of the determinant of the Jacobian of the warp: "
-  //            <<minmaxfilter->GetMinimum()<<std::endl;
-  //   std::cout<<"Maximum of the determinant of the Jacobian of the warp: "
-  //            <<minmaxfilter->GetMaximum()<<std::endl;
-  //   }
-
   typedef typename DeformationFieldType::IndexType IndexType;
   typedef typename ImageType::PointType PointType;
 
@@ -811,11 +598,15 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
     originalPoint[2] = f[2];
 
     IndexType index;
-    defField->TransformPhysicalPointToIndex( originalPoint, index );
-    VectorPixelType displacement = defField->GetPixel( index );
+    invDefField->TransformPhysicalPointToIndex( originalPoint, index );
+    VectorPixelType displacement = invDefField->GetPixel( index );
     f[0] += displacement[0];
     f[1] += displacement[1];
     f[2] += displacement[2];
+
+    f[0] = -f[0];
+    f[1] = -f[1];
+
     outfids[i] = f;
     logfile << index << endl;
     logfile << displacement << endl;
@@ -855,14 +646,13 @@ int main(int argc, char *argv[])
   args.movingImageFile = sourceVolume;
   args.outputImageFile = outfidpath + PATH_SEP + "result.nrrd";
   args.outputDeformationFieldFile = outfidpath + PATH_SEP + "def.vtk";
-  args.numIterations.resize(4);
-  args.numIterations[0] = 200;
-  args.numIterations[1] = 100;
-  args.numIterations[2] = 50;
-  args.numIterations[3] = 25;
+  args.numIterations.resize(3);
+  args.numIterations[0] = 25;
+  args.numIterations[1] = 10;
+  args.numIterations[2] = 5;
 
-  args.sigmaVel = 2.0;
-  args.sigmaUp = 2.0;
+  args.sigmaVel = 1.0;
+  args.sigmaUp = 1.0;
   args.maxStepLength = 2.0;
   args.updateRule = 1;
   args.gradientType = 0;
