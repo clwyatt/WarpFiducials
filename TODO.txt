@@ -1,0 +1,4 @@
+TODO
+
+* fix static build flag to not be used on Windows
+* BUG segfault on windows
