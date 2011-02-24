@@ -516,6 +516,69 @@ void LogDomainDemonsRegistrationFunction( arguments args, std::vector< std::vect
 
   }//end for mem allocations
 
+   // warp the result
+  typedef itk::WarpImageFilter
+    < ImageType, ImageType, DeformationFieldType >  WarperType;
+  typename WarperType::Pointer warper = WarperType::New();
+  warper->SetInput( movingImage );
+  warper->SetOutputSpacing( fixedImage->GetSpacing() );
+  warper->SetOutputOrigin( fixedImage->GetOrigin() );
+  warper->SetOutputDirection( fixedImage->GetDirection() );
+  warper->SetDeformationField( defField );
+
+
+  // Write warped image out to file
+  typedef PixelType                                OutputPixelType;
+	typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
+  typedef itk::CastImageFilter
+   < ImageType, OutputImageType >                  CastFilterType;
+  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+
+  typename WriterType::Pointer      writer =  WriterType::New();
+  typename CastFilterType::Pointer  caster =  CastFilterType::New();
+  writer->SetFileName( args.outputImageFile.c_str() );
+  caster->SetInput( warper->GetOutput() );
+  writer->SetInput( caster->GetOutput()   );
+  writer->SetUseCompression( true );
+
+  try
+    {
+    writer->Update();
+    }
+  catch( itk::ExceptionObject& err )
+    {
+    std::cout << "Unexpected error." << std::endl;
+    std::cout << err << std::endl;
+    exit( EXIT_FAILURE );
+    }
+
+
+  // Write output deformation field
+  if (!args.outputDeformationFieldFile.empty())
+    {
+    // Write the deformation field as an image of vectors.
+    // Note that the file format used for writing the deformation field must be
+    // capable of representing multiple components per pixel. This is the case
+    // for the MetaImage and VTK file formats for example.
+    typedef itk::ImageFileWriter< DeformationFieldType > FieldWriterType;
+    typename FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
+    fieldWriter->SetFileName(  args.outputDeformationFieldFile.c_str() );
+    fieldWriter->SetInput( defField );
+    fieldWriter->SetUseCompression( true );
+
+    try
+      {
+      fieldWriter->Update();
+      }
+    catch( itk::ExceptionObject& err )
+      {
+      std::cout << "Unexpected error." << std::endl;
+      std::cout << err << std::endl;
+      exit( EXIT_FAILURE );
+      }
+    }
+
+  // write warped fiducials
   typedef typename DeformationFieldType::IndexType IndexType;
   typedef typename ImageType::PointType PointType;
 
@@ -583,7 +646,7 @@ int main(int argc, char *argv[])
   args.fixedImageFile = targetVolume;
   args.movingImageFile = sourceVolume;
   args.outputImageFile = outfidpath + PATH_SEP + "result.nrrd";
-  args.outputDeformationFieldFile = outfidpath + PATH_SEP + "def.vtk";
+  args.outputDeformationFieldFile = outfidpath + PATH_SEP + "def.mha";
   args.numIterations.resize(3);
   args.numIterations[0] = 25;
   args.numIterations[1] = 10;
@@ -599,7 +662,7 @@ int main(int argc, char *argv[])
   args.verbosity = 0;
 
   args.outfidpath = outfidpath;
-  args.outfidfile = outfidfile;
+  args.outfidfile = "output.fcsv";
 
   LogDomainDemonsRegistrationFunction<3>(args, infids);
 

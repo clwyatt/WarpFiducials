@@ -44,13 +44,6 @@
       <index>2</index>
       <description>Output Fiducial File Path</description>
     </directory>
-    <string>
-      <name>outfidfile</name>
-      <label>Output Fiducial File</label>
-      <channel>input</channel>
-      <index>3</index>
-      <description>Output Fiducial File Name</description>
-    </string>
     <point multiple="true" coordinateSystem="lps">
       <name>infids</name>
       <label>Input Fiducials</label>
