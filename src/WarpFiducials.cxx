@@ -664,7 +664,32 @@ int main(int argc, char *argv[])
   args.outfidpath = outfidpath;
   args.outfidfile = "output.fcsv";
 
-  LogDomainDemonsRegistrationFunction<3>(args, infids);
+  // read fidicials from a file
+  std::ifstream ifs(infids_file.c_str());
+  if (!ifs.is_open())
+  {
+	std::cout << "failed to open the fiducial file: " << infids_file << std::endl;
+	return EXIT_FAILURE;
+  }
+
+  std::string fidid;
+  float x, y, z;
+  std::vector< float > xyz;
+  std::vector< std::vector< float > > fids;
+  while (true)
+  {
+	ifs >> fidid >> x >> y >> z;
+	if (!ifs.good())
+	    break;
+	xyz.clear();
+	xyz.push_back(x);
+	xyz.push_back(y);
+	xyz.push_back(z);
+	fids.push_back(xyz);
+  }
+
+  //LogDomainDemonsRegistrationFunction<3>(args, infids);
+  LogDomainDemonsRegistrationFunction<3>(args, fids);
 
   return EXIT_SUCCESS;
 }

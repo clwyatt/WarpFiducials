@@ -52,5 +52,11 @@
       <description>Input Fiducials</description>
       <longflag>--input</longflag>
     </point>
+	<string>
+	  <name>infids_file</name>
+	  <label>Input Fiducicals Filename</label>
+	  <description>Input Fiducials Filename</description>
+	  <longflag>--fidfile</longflag>
+	</string>
  </parameters>
 </executable>
